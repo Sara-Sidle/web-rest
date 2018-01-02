@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- 缓存-->
+    <bean id="redisCacheManager" class="com.rest.shiro.cache.CustomerRedisCacheManager">
+    	<property name="shiroCacheManager" ref= "redisShiroCacheManager"></property>
+    </bean>
+    
+    <!-- shiro 缓存实现，对ShiroCacheManager，我是采用redis的实现-->
+	<bean id="redisShiroCacheManager" class="com.rest.shiro.cache.RedisCacheManager"/>
+	
+    <!-- 缓存
+	<bean id="redisCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager"
+		p:cacheManagerConfigFile="classpath:ehcache.xml" /> -->
+</beans>

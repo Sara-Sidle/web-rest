@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rest.agent.dao.RyxUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.rest.agent.dao.entity.RyxUserInfo">
+    <result column="TIMESTAMP" jdbcType="VARCHAR" property="timestamp" />
+    <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+    <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PID" jdbcType="VARCHAR" property="pid" />
+    <result column="LIENCE" jdbcType="VARCHAR" property="lience" />
+    <result column="COMPANY" jdbcType="VARCHAR" property="company" />
+    <result column="COMPANY_ADDR" jdbcType="VARCHAR" property="companyAddr" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="TELEPHONE" jdbcType="VARCHAR" property="telephone" />
+    <result column="REGISTER_TIME" jdbcType="VARCHAR" property="registerTime" />
+    <result column="SMRZ_TIME" jdbcType="VARCHAR" property="smrzTime" />
+    <result column="UPDATE_TIME" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+  <insert id="insert" parameterType="com.rest.agent.dao.entity.RyxUserInfo">
+    insert into RYXZF.RYXZF.RYX_USER_INFO (TIMESTAMP, USER_ID, MOBILE, 
+      NAME, PID, LIENCE, 
+      COMPANY, COMPANY_ADDR, EMAIL, 
+      TELEPHONE, REGISTER_TIME, SMRZ_TIME, 
+      UPDATE_TIME)
+    values (#{timestamp,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}, #{lience,jdbcType=VARCHAR}, 
+      #{company,jdbcType=VARCHAR}, #{companyAddr,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{telephone,jdbcType=VARCHAR}, #{registerTime,jdbcType=VARCHAR}, #{smrzTime,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rest.agent.dao.entity.RyxUserInfo">
+    insert into RYXZF.RYXZF.RYX_USER_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="timestamp != null">
+        TIMESTAMP,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="mobile != null">
+        MOBILE,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="pid != null">
+        PID,
+      </if>
+      <if test="lience != null">
+        LIENCE,
+      </if>
+      <if test="company != null">
+        COMPANY,
+      </if>
+      <if test="companyAddr != null">
+        COMPANY_ADDR,
+      </if>
+      <if test="email != null">
+        EMAIL,
+      </if>
+      <if test="telephone != null">
+        TELEPHONE,
+      </if>
+      <if test="registerTime != null">
+        REGISTER_TIME,
+      </if>
+      <if test="smrzTime != null">
+        SMRZ_TIME,
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="timestamp != null">
+        #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=VARCHAR},
+      </if>
+      <if test="lience != null">
+        #{lience,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null">
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddr != null">
+        #{companyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="registerTime != null">
+        #{registerTime,jdbcType=VARCHAR},
+      </if>
+      <if test="smrzTime != null">
+        #{smrzTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

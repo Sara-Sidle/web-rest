@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rest.agent.dao.RyxUserAccountRelationMapper">
+  <resultMap id="BaseResultMap" type="com.rest.agent.dao.entity.RyxUserAccountRelation">
+    <id column="AGENCY_NO" jdbcType="VARCHAR" property="agencyNo" />
+    <id column="ONLINECHANNEL" jdbcType="VARCHAR" property="onlinechannel" />
+    <result column="TIMESTAMP" jdbcType="VARCHAR" property="timestamp" />
+    <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+    <result column="RELATION_TIME" jdbcType="VARCHAR" property="relationTime" />
+    <result column="DEFAULT_ACCOUNT" jdbcType="VARCHAR" property="defaultAccount" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    AGENCY_NO, ONLINECHANNEL, TIMESTAMP, USER_ID, RELATION_TIME, DEFAULT_ACCOUNT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from RYXZF.RYX_USER_ACCOUNT_RELATION
+    where AGENCY_NO = #{agencyNo,jdbcType=VARCHAR}
+      and ONLINECHANNEL = #{onlinechannel,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from RYXZF.RYX_USER_ACCOUNT_RELATION
+    where AGENCY_NO = #{agencyNo,jdbcType=VARCHAR}
+      and ONLINECHANNEL = #{onlinechannel,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.rest.agent.dao.entity.RyxUserAccountRelation">
+    insert into RYXZF.RYX_USER_ACCOUNT_RELATION (AGENCY_NO, ONLINECHANNEL, TIMESTAMP, 
+      USER_ID, RELATION_TIME, DEFAULT_ACCOUNT
+      )
+    values (#{agencyNo,jdbcType=VARCHAR}, #{onlinechannel,jdbcType=VARCHAR}, #{timestamp,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{relationTime,jdbcType=VARCHAR}, #{defaultAccount,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rest.agent.dao.entity.RyxUserAccountRelation">
+    insert into RYXZF.RYX_USER_ACCOUNT_RELATION
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="agencyNo != null">
+        AGENCY_NO,
+      </if>
+      <if test="onlinechannel != null">
+        ONLINECHANNEL,
+      </if>
+      <if test="timestamp != null">
+        TIMESTAMP,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="relationTime != null">
+        RELATION_TIME,
+      </if>
+      <if test="defaultAccount != null">
+        DEFAULT_ACCOUNT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="agencyNo != null">
+        #{agencyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="onlinechannel != null">
+        #{onlinechannel,jdbcType=VARCHAR},
+      </if>
+      <if test="timestamp != null">
+        #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="relationTime != null">
+        #{relationTime,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultAccount != null">
+        #{defaultAccount,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rest.agent.dao.entity.RyxUserAccountRelation">
+    update RYXZF.RYX_USER_ACCOUNT_RELATION
+    <set>
+      <if test="timestamp != null">
+        TIMESTAMP = #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="relationTime != null">
+        RELATION_TIME = #{relationTime,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultAccount != null">
+        DEFAULT_ACCOUNT = #{defaultAccount,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where AGENCY_NO = #{agencyNo,jdbcType=VARCHAR}
+      and ONLINECHANNEL = #{onlinechannel,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rest.agent.dao.entity.RyxUserAccountRelation">
+    update RYXZF.RYX_USER_ACCOUNT_RELATION
+    set TIMESTAMP = #{timestamp,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      RELATION_TIME = #{relationTime,jdbcType=VARCHAR},
+      DEFAULT_ACCOUNT = #{defaultAccount,jdbcType=VARCHAR}
+    where AGENCY_NO = #{agencyNo,jdbcType=VARCHAR}
+      and ONLINECHANNEL = #{onlinechannel,jdbcType=VARCHAR}
+  </update>
+</mapper>

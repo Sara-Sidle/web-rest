@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rest.agent.dao.RyxUserMobileMapper">
+	<resultMap id="BaseResultMap" type="com.rest.agent.dao.entity.RyxUserMobile">
+		<id column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+		<result column="TIMESTAMP" jdbcType="VARCHAR" property="timestamp" />
+		<result column="PASSWD" jdbcType="VARCHAR" property="passwd" />
+		<result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+	</resultMap>
+
+	<resultMap id="RoleMap" type="HashMap">
+		<id column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+		<result column="TIMESTAMP" jdbcType="VARCHAR" property="timestamp" />
+		<result column="PASSWD" jdbcType="VARCHAR" property="passwd" />
+		<result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+		<result column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
+	</resultMap>
+
+
+	<resultMap id="AgentMap" type="HashMap">
+		<id column="Agency_Id" jdbcType="VARCHAR" property="agencyId" />
+		<result column="COMPANYNAME" jdbcType="VARCHAR" property="companyName" />
+	</resultMap>
+
+	<resultMap id="UserMap" type="HashMap">
+		<id column="AGENCYID" jdbcType="VARCHAR" property="agencyId" />
+		<result column="USERID" jdbcType="VARCHAR" property="userId" />
+		<result column="USERNAME" jdbcType="VARCHAR" property="userName" />
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+		<result column="USERTYPEID" jdbcType="VARCHAR" property="userTypeId" />
+		<result column="ISPRICE" jdbcType="VARCHAR" property="isPrice" />
+		<result column="BELONE" jdbcType="VARCHAR" property="belone" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+		MOBILE, TIMESTAMP, PASSWD, USER_ID, USER_NAME
+	</sql>
+
+	<sql id="Role_Column_List">
+		MOBILE, TIMESTAMP, PASSWD, RM.USER_ID, USER_NAME,ROLE_ID
+	</sql>
+
+	<sql id="AGENT_Column_List">
+		QA.Agency_Id ,QA.COMPANYNAME
+	</sql>
+
+	<sql id="User_Column_List">
+		USERID,USERNAME,PASSWORD,AGENCYID,USERTYPEID,ISPRICE,BELONE
+	</sql>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from RYXZF.RYX_USER_MOBILE
+		where MOBILE = #{mobile,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 根据手机号获得角色信息 -->
+	<select id="selectRoleByPrimaryKey" parameterType="java.lang.String"
+		resultMap="RoleMap">
+		select
+		<include refid="Role_Column_List" />
+		FROM RYXZF.RYX_USER_MOBILE RM
+		LEFT JOIN RYXAGENT.USER_ROLE_RELATION URR
+		ON URR.USER_ID=RM.USER_ID
+		WHERE RM.MOBILE= #{mobile,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 根据登录手机号，查询关联代理编号 -->
+	<select id="selectAgencyByMobile" parameterType="java.lang.String"
+		resultMap="AgentMap">
+
+		select
+		<include refid="AGENT_Column_List" />
+		FROM RYXZF.RYX_USER_MOBILE RM
+		,RYXZF.RYX_USER_ACCOUNT_RELATION
+		RUAR
+		,RYXFR.QT1TBLAGENCY QA
+		WHERE RUAR.USER_ID=RM.USER_ID
+		AND
+		RUAR.AGENCY_NO=QA.AGENCY_ID
+		AND RM.MOBILE= #{mobile,jdbcType=VARCHAR}
+	</select>
+
+
+
+	<!-- 根据登录手机号，查询关联代理编号 -->
+	<select id="selectAgencyByAccount" parameterType="java.lang.String"
+		resultMap="UserMap">
+
+		SELECT
+		<include refid="User_Column_List" />
+		FROM v_getuser
+		WHERE AGENCYID= #{agency_id,jdbcType=VARCHAR}
+		AND USERNAME= #{agency_id,jdbcType=VARCHAR}
+
+	</select>
+
+
+
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from RYXZF.RYX_USER_MOBILE
+		where MOBILE = #{mobile,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.rest.agent.dao.entity.RyxUserMobile">
+		insert into RYXZF.RYX_USER_MOBILE (MOBILE, TIMESTAMP, PASSWD,
+		USER_ID, USER_NAME)
+		values (#{mobile,jdbcType=VARCHAR}, #{timestamp,jdbcType=VARCHAR},
+		#{passwd,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rest.agent.dao.entity.RyxUserMobile">
+		insert into RYXZF.RYX_USER_MOBILE
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="mobile != null">
+				MOBILE,
+			</if>
+			<if test="timestamp != null">
+				TIMESTAMP,
+			</if>
+			<if test="passwd != null">
+				PASSWD,
+			</if>
+			<if test="userId != null">
+				USER_ID,
+			</if>
+			<if test="userName != null">
+				USER_NAME,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="mobile != null">
+				#{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="timestamp != null">
+				#{timestamp,jdbcType=VARCHAR},
+			</if>
+			<if test="passwd != null">
+				#{passwd,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rest.agent.dao.entity.RyxUserMobile">
+		update RYXZF.RYX_USER_MOBILE
+		<set>
+			<if test="timestamp != null">
+				TIMESTAMP = #{timestamp,jdbcType=VARCHAR},
+			</if>
+			<if test="passwd != null">
+				PASSWD = #{passwd,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				USER_ID = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				USER_NAME = #{userName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where MOBILE = #{mobile,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rest.agent.dao.entity.RyxUserMobile">
+		update RYXZF.RYX_USER_MOBILE
+		set TIMESTAMP = #{timestamp,jdbcType=VARCHAR},
+		PASSWD = #{passwd,jdbcType=VARCHAR},
+		USER_ID = #{userId,jdbcType=VARCHAR},
+		USER_NAME = #{userName,jdbcType=VARCHAR}
+		where MOBILE = #{mobile,jdbcType=VARCHAR}
+	</update>
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rest.agent.dao.SmsSendMapper">
+  <resultMap id="BaseResultMap" type="com.rest.agent.dao.entity.SmsSend">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PHONENO" jdbcType="VARCHAR" property="phoneno" />
+    <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+    <result column="CHANNEL" jdbcType="VARCHAR" property="channel" />
+    <result column="TIMESTAMP" jdbcType="VARCHAR" property="timestamp" />
+    <result column="BRANCHID" jdbcType="VARCHAR" property="branchid" />
+    <result column="SENDSTATE" jdbcType="VARCHAR" property="sendstate" />
+    <result column="ORIGDATE" jdbcType="VARCHAR" property="origdate" />
+    <result column="ORIGTIME" jdbcType="VARCHAR" property="origtime" />
+    <result column="ORIGLOGNO" jdbcType="VARCHAR" property="origlogno" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PHONENO, CONTENT, CHANNEL, TIMESTAMP, BRANCHID, SENDSTATE, ORIGDATE, ORIGTIME, 
+    ORIGLOGNO, TYPE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from SMS_SEND
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectPhoneCode" resultMap="BaseResultMap" parameterType="map">
+		select ID ,
+		PHONENO ,
+		CONTENT ,
+		CHANNEL ,
+		TIMESTAMP ,
+		BRANCHID ,
+		SENDSTATE ,
+		ORIGDATE ,
+		ORIGTIME ,
+		ORIGLOGNO ,
+		TYPE from ryxpay.sms_send
+		where phoneno= #{mobile} and
+		origdate||origtime =
+		(
+		select max(origdate||origtime) from ryxpay.sms_send where
+		phoneno= #{mobile}
+		)
+		and origdate||origtime <![CDATA[>=]]>#{validtime} and branchid = 'agent'
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from SMS_SEND
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.rest.agent.dao.entity.SmsSend">
+    insert into SMS_SEND (ID, PHONENO, CONTENT, 
+      CHANNEL, TIMESTAMP, BRANCHID, 
+      SENDSTATE, ORIGDATE, ORIGTIME, 
+      ORIGLOGNO, TYPE)
+    values (#{id,jdbcType=VARCHAR}, #{phoneno,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{channel,jdbcType=VARCHAR}, #{timestamp,jdbcType=VARCHAR}, #{branchid,jdbcType=VARCHAR}, 
+      #{sendstate,jdbcType=VARCHAR}, #{origdate,jdbcType=VARCHAR}, #{origtime,jdbcType=VARCHAR}, 
+      #{origlogno,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rest.agent.dao.entity.SmsSend">
+    insert into SMS_SEND
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="phoneno != null">
+        PHONENO,
+      </if>
+      <if test="content != null">
+        CONTENT,
+      </if>
+      <if test="channel != null">
+        CHANNEL,
+      </if>
+      <if test="timestamp != null">
+        TIMESTAMP,
+      </if>
+      <if test="branchid != null">
+        BRANCHID,
+      </if>
+      <if test="sendstate != null">
+        SENDSTATE,
+      </if>
+      <if test="origdate != null">
+        ORIGDATE,
+      </if>
+      <if test="origtime != null">
+        ORIGTIME,
+      </if>
+      <if test="origlogno != null">
+        ORIGLOGNO,
+      </if>
+      <if test="type != null">
+        TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneno != null">
+        #{phoneno,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null">
+        #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="timestamp != null">
+        #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="branchid != null">
+        #{branchid,jdbcType=VARCHAR},
+      </if>
+      <if test="sendstate != null">
+        #{sendstate,jdbcType=VARCHAR},
+      </if>
+      <if test="origdate != null">
+        #{origdate,jdbcType=VARCHAR},
+      </if>
+      <if test="origtime != null">
+        #{origtime,jdbcType=VARCHAR},
+      </if>
+      <if test="origlogno != null">
+        #{origlogno,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rest.agent.dao.entity.SmsSend">
+    update SMS_SEND
+    <set>
+      <if test="phoneno != null">
+        PHONENO = #{phoneno,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null">
+        CHANNEL = #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="timestamp != null">
+        TIMESTAMP = #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="branchid != null">
+        BRANCHID = #{branchid,jdbcType=VARCHAR},
+      </if>
+      <if test="sendstate != null">
+        SENDSTATE = #{sendstate,jdbcType=VARCHAR},
+      </if>
+      <if test="origdate != null">
+        ORIGDATE = #{origdate,jdbcType=VARCHAR},
+      </if>
+      <if test="origtime != null">
+        ORIGTIME = #{origtime,jdbcType=VARCHAR},
+      </if>
+      <if test="origlogno != null">
+        ORIGLOGNO = #{origlogno,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rest.agent.dao.entity.SmsSend">
+    update SMS_SEND
+    set PHONENO = #{phoneno,jdbcType=VARCHAR},
+      CONTENT = #{content,jdbcType=VARCHAR},
+      CHANNEL = #{channel,jdbcType=VARCHAR},
+      TIMESTAMP = #{timestamp,jdbcType=VARCHAR},
+      BRANCHID = #{branchid,jdbcType=VARCHAR},
+      SENDSTATE = #{sendstate,jdbcType=VARCHAR},
+      ORIGDATE = #{origdate,jdbcType=VARCHAR},
+      ORIGTIME = #{origtime,jdbcType=VARCHAR},
+      ORIGLOGNO = #{origlogno,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

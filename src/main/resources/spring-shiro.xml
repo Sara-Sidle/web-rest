@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+	default-lazy-init="true">
+
+	<description>Shiro 登录权限控制</description>
+
+	<!-- 密码匹配规则 -->
+	<bean id="hashedCredentialsMatcher"
+		class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+		<property name="hashAlgorithmName" value="MD5" />
+		<property name="storedCredentialsHexEncoded" value="true" />
+		<property name="hashIterations" value="1" />
+	</bean>
+
+
+	<!-- shiro session在线人数监控 -->
+	<bean id="agentSessionListener" class="com.rest.listener.ShiroSessionListener" />
+	
+	<!-- redis session 存储 -->
+	<bean id = "sessionDAO" class="com.rest.shiro.session.RedisSessionDao"/>
+	
+	<!-- 会话管理 -->
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<!-- 相隔多久检查一次session的有效性
+		<property name="sessionValidationInterval" value="60000" /> -->
+		<!-- session 有效时间为半小时 （毫秒单位） -->
+		<!-- session的失效时长，单位毫秒 -->
+		<property name="globalSessionTimeout" value="1800000" />
+		
+		<!-- 是否开启 检测，默认开启  因 配置redis 记录缓存， 关闭shiro检测-->
+		<property name="sessionValidationSchedulerEnabled" value="true" />
+		
+		<!-- 删除失效的session
+		<property name="deleteInvalidSessions" value="false" /> -->
+		<!-- session 监听，可以多个。 -->
+		<property name="sessionListeners">
+			<list>
+				<ref bean="agentSessionListener" />
+			</list>
+		</property>
+		<property name="sessionDAO" ref = "sessionDAO"></property>
+	</bean>
+
+<!-- 	<bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg value="rememberMe" />
+		<property name="httpOnly" value="true" />
+		<property name="maxAge" value="2592000" />30天
+	</bean> -->
+
+	<!-- rememberMe管理器
+	<bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager"> -->
+		<!-- rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位）
+		<property name="cipherKey"
+			value="#{T(org.apache.shiro.codec.Base64).decode('4AvVhmFLUs0KTA3Kprsdag==')}" />
+		<property name="cookie" ref="rememberMeCookie" />
+	</bean> -->
+
+	<!-- 定义 Shiro 主要业务对象 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!-- 单realm应用。如果有多个realm，使用‘realms’属性代替 <property name="realm" ref="" /> -->
+		<property name="cacheManager" ref="redisCacheManager" />
+		<property name="sessionManager" ref="sessionManager" />
+		<!-- <property name="rememberMeManager" ref="rememberMeManager" /> -->
+		
+		<property name="authenticator" ref="authenticator"></property>
+		<property name="realms">
+			<list>
+				<ref bean="phonePwdRealm" />
+				<ref bean="phoneSmsRealm" />
+				<ref bean="accountPwdRealm" />
+			</list>
+		</property>
+	</bean>
+	<!-- 相当于调用SecurityUtils.setSecurityManager(securityManager) -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager"/>
+        <property name="arguments" ref="securityManager"/>
+    </bean>
+	
+	
+	<!-- realms 配置 -->
+	<bean id="phonePwdRealm" class="com.rest.shiro.realms.PhonePwdRealm" />
+	<bean id="phoneSmsRealm" class="com.rest.shiro.realms.PhoneSmsRealm" />
+	<bean id="accountPwdRealm" class="com.rest.shiro.realms.AccountPwdRealm" />
+	
+	
+	
+	<!-- 配置使用自定义认证器，可以实现多Realm认证，并且可以指定特定Realm处理特定类型的验证 -->
+	<bean id="authenticator"
+		class="com.rest.shiro.authenticator.UsersModularRealmAuthenticator">
+		<!-- 配置认证策略，只要有一个Realm认证成功即可，并且返回所有认证成功信息 -->
+		<property name="authenticationStrategy">
+			<bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"></bean>
+		</property>
+	</bean>
+	
+	
+	<!-- shiro控制 -->
+	<bean id="shiroFilter" class="com.rest.filter.ApolloShiroFilterFactoryBean">
+	<!-- <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  -->
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="${source.url}login"/>
+		<property name="successUrl" value="${source.url}choseAgent" />
+		<property name="unauthorizedUrl" value="${source.url}login_false" />
+		<property name="filters">
+			<map>
+				<!-- 这里的key，是用来在 filterChainDefinitions中过滤用的 -->
+				<entry key="kickout" value-ref="kickoutSessionControlFilter" />
+				<entry key="logout" value-ref="logoutFilter" />
+			</map>
+		</property>
+		<!-- 权限控制 -->
+		<property name="filterChainDefinitions">
+			<value>
+				/static/** = anon
+				/login = anon
+				/kaptcha = anon
+				/dologin = anon
+				/logout = logout
+				/sendMsg = anon
+				/** = kickout,authc
+			</value>
+		</property>
+ 		<property name="filterChainExcludeList">
+			<list>
+				<value>/static/**</value>
+				<value>/**/*.js</value>
+				<value>/**/*.css</value>
+				<value>/**/*.jpg</value>
+				<value>/**/*.png</value>
+				<value>/**/*.gif</value>
+				<value>/**/*.ttf</value>
+				<value>/**/*.woff</value>
+				<value>/**/*.woff2</value>
+				<value>/**/*.ico</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="kickoutSessionControlFilter" class="com.rest.filter.KickoutSessionControlFilter">
+	
+		<!--cacheManager：使用cacheManager获取相应的cache来缓存用户登录的会话；用于保存用户—会话之间的关系的； -->
+		<property name="cacheManager" ref="redisCacheManager" />
+
+		<!-- sessionManager：用于根据会话ID，获取会话进行踢出操作的； -->
+		<property name="sessionManager" ref="sessionManager" />
+
+		<!-- kickoutAfter：是否踢出后来登录的，默认是false；即后者登录的用户踢出前者登录的用户； -->
+		<property name="kickoutAfter" value="false" />
+		<!-- maxSession：同一个用户最大的会话数，默认1；比如2的意思是同一个用户允许最多同时两个人登录； -->
+		<property name="maxSession" value="1" />
+		<!-- kickoutUrl：被踢出后重定向到的地址； -->
+		<property name="kickoutUrl" value="${source.url}kickOut" />
+		<property name="choseAgentUrl" value="${source.url}choseAgent" />
+		
+	</bean>
+	
+	<bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
+     <property name="redirectUrl" value="${source.url}" />
+	</bean>
+
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	<import resource="./spring-cache.xml" />
+
+</beans>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rest.agent.dao.RyxSendMsgMapper">
+  <resultMap id="BaseResultMap" type="com.rest.agent.dao.entity.RyxSendMsg">
+    <id column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+    <id column="INSERT_DATE" jdbcType="TIMESTAMP" property="insertDate" />
+    <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent" />
+    <result column="TEMPLATE_ID" jdbcType="VARCHAR" property="templateId" />
+    <result column="RESP_SMSID" jdbcType="VARCHAR" property="respSmsid" />
+    <result column="FAILED_REASON" jdbcType="VARCHAR" property="failedReason" />
+    <result column="FIRST_DATE" jdbcType="VARCHAR" property="firstDate" />
+    <result column="LAST_DATE" jdbcType="VARCHAR" property="lastDate" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="SEND_COUNT" jdbcType="NUMERIC" property="sendCount" />
+    <result column="SEND_DATE" jdbcType="VARCHAR" property="sendDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    MOBILE, INSERT_DATE, SMS_CONTENT, TEMPLATE_ID, RESP_SMSID, FAILED_REASON, FIRST_DATE, 
+    LAST_DATE, STATUS
+  </sql>
+	<select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from RYX_SEND_MSG
+		where MOBILE = #{mobile,jdbcType=VARCHAR}
+		and INSERT_DATE = (
+			select max(insert_date)
+			from RYX_SEND_MSG where MOBILE = #{mobile,jdbcType=VARCHAR}
+		)
+		and #{insertDate,jdbcType=TIMESTAMP} <![CDATA[>=]]> FIRST_DATE
+		and #{insertDate,jdbcType=TIMESTAMP} <![CDATA[<=]]> LAST_DATE
+	</select>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from RYX_SEND_MSG
+    where MOBILE = #{mobile,jdbcType=VARCHAR}
+      and INSERT_DATE = #{insertDate,jdbcType=TIMESTAMP}
+  </delete>
+  <insert id="insert" parameterType="com.rest.agent.dao.entity.RyxSendMsg">
+    insert into RYX_SEND_MSG (MOBILE, INSERT_DATE, SMS_CONTENT, 
+      TEMPLATE_ID, RESP_SMSID, FAILED_REASON, 
+      FIRST_DATE, LAST_DATE, STATUS
+      )
+    values (#{mobile,jdbcType=VARCHAR}, #{insertDate,jdbcType=TIMESTAMP}, #{smsContent,jdbcType=VARCHAR}, 
+      #{templateId,jdbcType=VARCHAR}, #{respSmsid,jdbcType=VARCHAR}, #{failedReason,jdbcType=VARCHAR}, 
+      #{firstDate,jdbcType=VARCHAR}, #{lastDate,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rest.agent.dao.entity.RyxSendMsg">
+    insert into RYX_SEND_MSG
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mobile != null">
+        MOBILE,
+      </if>
+      <if test="insertDate != null">
+        INSERT_DATE,
+      </if>
+      <if test="smsContent != null">
+        SMS_CONTENT,
+      </if>
+      <if test="templateId != null">
+        TEMPLATE_ID,
+      </if>
+      <if test="respSmsid != null">
+        RESP_SMSID,
+      </if>
+      <if test="failedReason != null">
+        FAILED_REASON,
+      </if>
+      <if test="firstDate != null">
+        FIRST_DATE,
+      </if>
+      <if test="lastDate != null">
+        LAST_DATE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="insertDate != null">
+        #{insertDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="smsContent != null">
+        #{smsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null">
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="respSmsid != null">
+        #{respSmsid,jdbcType=VARCHAR},
+      </if>
+      <if test="failedReason != null">
+        #{failedReason,jdbcType=VARCHAR},
+      </if>
+      <if test="firstDate != null">
+        #{firstDate,jdbcType=VARCHAR},
+      </if>
+      <if test="lastDate != null">
+        #{lastDate,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rest.agent.dao.entity.RyxSendMsg">
+    update RYX_SEND_MSG
+    <set>
+      <if test="smsContent != null">
+        SMS_CONTENT = #{smsContent,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null">
+        TEMPLATE_ID = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="respSmsid != null">
+        RESP_SMSID = #{respSmsid,jdbcType=VARCHAR},
+      </if>
+      <if test="failedReason != null">
+        FAILED_REASON = #{failedReason,jdbcType=VARCHAR},
+      </if>
+      <if test="firstDate != null">
+        FIRST_DATE = #{firstDate,jdbcType=VARCHAR},
+      </if>
+      <if test="lastDate != null">
+        LAST_DATE = #{lastDate,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where MOBILE = #{mobile,jdbcType=VARCHAR}
+      and INSERT_DATE = #{insertDate,jdbcType=TIMESTAMP}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rest.agent.dao.entity.RyxSendMsg">
+    update RYX_SEND_MSG
+    set SMS_CONTENT = #{smsContent,jdbcType=VARCHAR},
+      TEMPLATE_ID = #{templateId,jdbcType=VARCHAR},
+      RESP_SMSID = #{respSmsid,jdbcType=VARCHAR},
+      FAILED_REASON = #{failedReason,jdbcType=VARCHAR},
+      FIRST_DATE = #{firstDate,jdbcType=VARCHAR},
+      LAST_DATE = #{lastDate,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR}
+    where MOBILE = #{mobile,jdbcType=VARCHAR}
+      and INSERT_DATE = #{insertDate,jdbcType=TIMESTAMP}
+  </update>
+  
+    <select id="selectSendMsgCount" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select MOBILE
+    from RYX_SEND_COUNT
+    where MOBILE = #{mobile,jdbcType=VARCHAR}
+    and SEND_DATE=to_char(sysdate,'yyyymmdd')
+  </select>
+  
+    <insert id="addSendMsgCount" parameterType="com.rest.agent.dao.entity.RyxSendMsg">
+    insert into RYX_SEND_COUNT (MOBILE, SEND_DATE, SEND_COUNT)
+    values (#{mobile,jdbcType=VARCHAR}, #{sendDate,jdbcType=VARCHAR}, '1')
+  </insert>
+  
+    <update id="updateSendMsgCount" parameterType="com.rest.agent.dao.entity.RyxSendMsg">
+    update RYX_SEND_COUNT
+    set SEND_COUNT = SEND_COUNT+1
+   where MOBILE = #{mobile,jdbcType=VARCHAR}
+    and SEND_DATE=to_char(sysdate,'yyyymmdd')
+  </update>
+  
+    <select id="selectMsgCount" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select SEND_COUNT
+    from RYX_SEND_COUNT
+    where MOBILE = #{mobile,jdbcType=VARCHAR}
+    and SEND_DATE=to_char(sysdate,'yyyymmdd')
+  </select>
+</mapper>
